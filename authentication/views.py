@@ -1,4 +1,3 @@
-import feedback
 from django.core import serializers
 
 # Create your views here.
