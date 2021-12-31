@@ -1,3 +1,4 @@
+import feedback
 from django.core import serializers
 
 # Create your views here.
@@ -8,8 +9,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.forms import UserCreationForm
 from rest_framework import generics
 
+from beranda.forms_homepage import FeedbackForm
+from beranda.models import Feedback
 from beranda import models
 from .serializers import FeedbackSerializer
+from django.core.serializers import serialize
 from .forms_login2 import CreateUserForm
 import json
 
@@ -49,7 +53,7 @@ def daftar(request):
 #         form.cleaned_data['email'] = request.POST.get('email')
 #         form.cleaned_data['password1'] = request.POST.get('password1')
 #         form.cleaned_data['password2'] = request.POST.get('password2')
-        
+
         if form.is_valid():
             form.save()
             # Redirect to a success page.
@@ -76,10 +80,14 @@ def logoutFlutter(request) :
               "message": "Succes Logout"
             }, status=200)
 
-# Used for read-write endpoints to represent a collection of model instances.
 class ListFeedback(generics.ListCreateAPIView):
+    queryset = models.Feedback.objects.all()
     serializer_class = FeedbackSerializer
 
-# Used for read-write-delete endpoints to represent a single model instance.
 class DetailFeedback(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Feedback.objects.all()
     serializer_class = FeedbackSerializer
+
+def get_object(request):
+    data = [feedback.json() for feedback in Feedback.objects.all().order_by('-id')]
+    return HttpResponse(json.dumps(data), content_type="application/json")
