@@ -27,66 +27,86 @@ def login(request):
             auth_login(request, user)
             # Redirect to a success page.
             return JsonResponse({
-              "status": True,
-              "message": "Successfully Logged In!"
+                "status": True,
+                "message": "Successfully Logged In!"
             }, status=200)
         else:
             return JsonResponse({
-              "status": False,
-              "message": "Failed to Login, Account Disabled."
+                "status": False,
+                "message": "Failed to Login, Account Disabled."
             }, status=401)
 
     else:
         return JsonResponse({
-          "status": False,
-          "message": "Failed to Login, check your email/password."
+            "status": False,
+            "message": "Failed to Login, check your email/password."
         }, status=401)
+
 
 @csrf_exempt
 def daftar(request):
     form = CreateUserForm()
 
-    if request.method == 'POST' :
+    if request.method == 'POST':
         form = CreateUserForm(json.loads(request.body))
-#         form.cleaned_data['username'] = request.POST.get('username')
-#         form.cleaned_data['email'] = request.POST.get('email')
-#         form.cleaned_data['password1'] = request.POST.get('password1')
-#         form.cleaned_data['password2'] = request.POST.get('password2')
+        #         form.cleaned_data['username'] = request.POST.get('username')
+        #         form.cleaned_data['email'] = request.POST.get('email')
+        #         form.cleaned_data['password1'] = request.POST.get('password1')
+        #         form.cleaned_data['password2'] = request.POST.get('password2')
 
         if form.is_valid():
             form.save()
             # Redirect to a success page.
             return JsonResponse({
-              "status": True,
-              "message": "Successfully Sign Up!"
+                "status": True,
+                "message": "Successfully Sign Up!"
             }, status=200)
-        else :
-          return JsonResponse({
-              "request" : form.errors,
-              "status": False,
-              "message": "Failed to Sign Up"
+        else:
+            return JsonResponse({
+                "request": form.errors,
+                "status": False,
+                "message": "Failed to Sign Up"
             }, status=401)
-    else :
-      return JsonResponse({
-              "status": False,
-              "message": "Failed to Sign Up"
-            }, status=401)
+    else:
+        return JsonResponse({
+            "status": False,
+            "message": "Failed to Sign Up"
+        }, status=401)
 
-def logoutFlutter(request) :
+
+def logoutFlutter(request):
     logout(request.body)
     return JsonResponse({
-              "status": True,
-              "message": "Succes Logout"
-            }, status=200)
+        "status": True,
+        "message": "Succes Logout"
+    }, status=200)
+
 
 class ListFeedback(generics.ListCreateAPIView):
     queryset = models.Feedback.objects.all()
     serializer_class = FeedbackSerializer
 
+
 class DetailFeedback(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Feedback.objects.all()
     serializer_class = FeedbackSerializer
 
+
 def get_object(request):
     data = [feedback.json() for feedback in Feedback.objects.all().order_by('-id')]
     return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@csrf_exempt
+def AddFeedbackFlutter(request):
+    if request.method == 'POST':
+        newFeedback = json.loads(request.body)
+
+        new_feedback = Feedback(
+            name=newFeedback['name'],
+            email=newFeedback['email'],
+            comments=newFeedback['comments'],
+        )
+
+        new_feedback.save()
+        return JsonResponse({"instance": "Feedback berhasil disimpan!"}, status=200)
