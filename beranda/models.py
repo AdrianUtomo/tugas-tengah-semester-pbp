@@ -9,5 +9,5 @@ class Feedback(models.Model):
         return {
             'name': self.name,
             'email': self.email,
-            'comments': self.email,
+            'comments': self.comments,
         }
