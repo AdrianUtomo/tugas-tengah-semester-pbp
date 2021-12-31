@@ -15,4 +15,8 @@ class Qs(models.Model):
     def __str__(self):
         return self.qs
 
-    
+def json(self):
+    return {
+        'question': self.qs,
+        'answer': self.answer,
+    }  

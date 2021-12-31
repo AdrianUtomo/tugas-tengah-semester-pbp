@@ -1,9 +1,15 @@
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from .models import Faq,Qs
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.core import serializers
+import json
+
 from .forms import QsForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def index(request):
@@ -36,3 +42,20 @@ def qs(request):
     }
     
     return render(request, 'index_faq.html',context)
+
+def jsonFlutter(request):
+    data = [serializers.serialize('json', Faq.objects.all())]
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+# @csrf_exempt
+# def QuestionBox(request):
+#     if request.method == 'POST':
+#         question = json.loads(request.qs)
+
+#         new_question = Qs(
+#             qs = question['question'],
+        
+#        )
+
+#         new_question.save()
+#         return JsonResponse({"instance": "Pertanyaan berhasil dikirim!"}, status=200)
