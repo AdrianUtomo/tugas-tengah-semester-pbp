@@ -8,11 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.forms import UserCreationForm
 from rest_framework import generics
 
-from beranda.forms_homepage import FeedbackForm
-from beranda.models import Feedback
 from beranda import models
 from .serializers import FeedbackSerializer
-from django.core.serializers import serialize
 from .forms_login2 import CreateUserForm
 import json
 
@@ -79,49 +76,10 @@ def logoutFlutter(request) :
               "message": "Succes Logout"
             }, status=200)
 
-@csrf_exempt
-def json_fb(request) :
-    data = serializers.serialize('json', Feedback.objects.all())
-    return HttpResponse(data, content_type="application/json")
-
-
-def fb_json(request):
-    if request.method == 'POST':
-        form = FeedbackForm()
-
-        if form.is_valid():
-            form.save()
-            # Redirect to a success page.
-            return JsonResponse({
-                "status": True,
-                "message": "YAY!"
-            }, status=200)
-        else:
-            return JsonResponse({
-                "request": form.errors,
-                "status": False,
-                "message": "Tidak ada feedback"
-            }, status=401)
-    else:
-        return JsonResponse({
-            "status": False,
-            "message": "noooo"
-        }, status=401)
-
-def feedback_json(request):
-    qs = Feedback.objects.all()
-    data = serialize("json", qs, fields=('name', 'email', 'comments'))
-    return JsonResponse({
-        "comments": "fine, thank u",
-        "name": "kinan",
-        "email": "kinan@gmail.com"
-    })
-    # return HttpResponse(data, content_type="application/json")
-
+# Used for read-write endpoints to represent a collection of model instances.
 class ListFeedback(generics.ListCreateAPIView):
-    queryset = models.Feedback.objects.all()
     serializer_class = FeedbackSerializer
 
+# Used for read-write-delete endpoints to represent a single model instance.
 class DetailFeedback(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.Feedback.objects.all()
     serializer_class = FeedbackSerializer
