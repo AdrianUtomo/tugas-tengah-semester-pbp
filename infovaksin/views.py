@@ -3,6 +3,8 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from .models import Comment
 from .forms import CommentForm
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def index(request):
@@ -20,7 +22,19 @@ def index(request):
 
     return render(request,'infovaksin.html',context)
 
+@csrf_exempt
+def AddCommentFlutter(request):
+    if request.method == 'POST':
+        newComment = json.loads(request.body)
 
+        new_comment = Comment(
+            name = newComment['name'],
+            content = newComment['content'],
+            date = newComment['date']
+        )
+
+        new_comment.save()
+        return JsonResponse(new_comment, safe=False)
 # def show_json(request):
 #     return JsonResponse()
 
