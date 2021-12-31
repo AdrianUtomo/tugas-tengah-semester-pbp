@@ -9,4 +9,6 @@ class FeedbackSerializer(serializers.ModelSerializer):
             "email",
             "comments"
         )
-        model = models.Feedback
+        model = models.Feedback # Pakai model di beranda/models.py
+
+# Mirip kaya form
