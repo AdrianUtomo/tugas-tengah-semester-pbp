@@ -14,8 +14,6 @@
 
 - Kartika Dian Pratiwi - 2006596270
 
-- Ryan Sujana Husein - 2006596485
-
 ---
 
 ## Deskripsi singkat :
